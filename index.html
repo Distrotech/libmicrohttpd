@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <title>Libmicrohttpd by Distrotech</title>
+  </head>
+
+  <body>
+    <div id="container">
+      <div class="inner">
+
+        <header>
+          <h1>Libmicrohttpd</h1>
+          <h2>Mirror of https://gnunet.org/svn/libmicrohttpd</h2>
+        </header>
+
+        <section id="downloads" class="clearfix">
+          <a href="https://github.com/Distrotech/libmicrohttpd/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
+          <a href="https://github.com/Distrotech/libmicrohttpd/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
+          <a href="https://github.com/Distrotech/libmicrohttpd" id="view-on-github" class="button"><span>View on GitHub</span></a>
+        </section>
+
+        <hr>
+
+        <section id="main_content">
+          <h1>
+<a name="about" class="anchor" href="#about"><span class="octicon octicon-link"></span></a>About</h1>
+
+<p>libmicrohttpd is a GNU library (part of the GNU project) written in C
+that provides a compact API and implementation of an HTTP 1.1 web
+server (HTTP 1.0 is also supported).  libmicrohttpd only implements
+the HTTP 1.1 protocol.  The main application must still provide the
+content.</p>
+
+<h1>
+<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h1>
+
+<p>If you are using Subversion, run "autoreconf -fi" to create configure.</p>
+
+<p>In order to run the testcases, you need a recent version of libcurl.
+libcurl is not required if you just want to install the library.</p>
+
+<p>Especially for development, do use the MHD_USE_DEBUG option to get
+error messages.</p>
+
+<h1>
+<a name="configure-options" class="anchor" href="#configure-options"><span class="octicon octicon-link"></span></a>Configure options</h1>
+
+<p>If you are concerned about space, you should set "CFLAGS" to "-Os
+-fomit-frame-pointer" to have gcc generate tight code.</p>
+
+<p>You can use the following options to disable certain MHD features:</p>
+
+<p>--disable-https: no HTTPS / TLS / SSL support (significant reduction)
+--disable-messages: no error messages (they take space!)
+--disable-postprocessor: no MHD_PostProcessor API
+--disable-dauth: no digest authentication API</p>
+
+<p>The resulting binary should be about 30-40k depending on the platform.</p>
+
+<h1>
+<a name="portability" class="anchor" href="#portability"><span class="octicon octicon-link"></span></a>Portability</h1>
+
+<p>The latest version of libmicrohttpd will try to avoid SIGPIPE on its
+sockets.  This should work on OS X, Linux and recent BSD systems (at
+least).  On other systems that may trigger a SIGPIPE on send/recv, the
+main application should install a signal handler to handle SIGPIPE.</p>
+
+<p>libmicrohttpd should work well on GNU/Linux, BSD, OS X, W32 and z/OS.
+Note that HTTPS is not supported on z/OS (yet).  We also have reports
+of users using it on vxWorks and Symbian.  Note that on platforms
+where the compiler does not support the "constructor" attribute, you
+must call "MHD_init" before using any MHD functions and "MHD_fini"
+after you are done using MHD.</p>
+
+<h2>
+<a name="notes-on-compiling-on-zos" class="anchor" href="#notes-on-compiling-on-zos"><span class="octicon octicon-link"></span></a>Notes on compiling on z/OS:</h2>
+
+<p>After extracting the archive, run</p>
+
+<p>iconv -f UTF-8 -t IBM-1047 contrib/ascebc &gt; /tmp/ascebc.sh
+chmod +x /tmp/ascebc.sh
+for n in <code>find * -type f</code>
+do
+  /tmp/ascebc.sh $n
+done</p>
+
+<p>to convert all source files to EBCDIC.  Note that you must run
+"configure" from the directory where the configure script is
+located.   Otherwise, configure will fail to find the
+"contrib/xcc" script (which is a wrapper around the z/OS c89
+compiler).</p>
+
+<h1>
+<a name="development-status" class="anchor" href="#development-status"><span class="octicon octicon-link"></span></a>Development Status</h1>
+
+<p>This is a beta release.  Below we list things that should be
+implemented (in order of importance) before we can claim to be
+reasonably complete.</p>
+
+<h1>
+<a name="untested-features" class="anchor" href="#untested-features"><span class="octicon octicon-link"></span></a>Untested features:</h1>
+
+<ul>
+<li>add testcases for http/1.1 pipelining (need
+to figure out how to ensure curl pipelines 
+-- and it seems libcurl has issues with pipelining, 
+see <a href="http://curl.haxx.se/mail/lib-2007-12/0248.html">http://curl.haxx.se/mail/lib-2007-12/0248.html</a>)</li>
+<li>add testcases for resource limit enforcement</li>
+<li>add testcases for client queuing early response,
+suppressing 100 CONTINUE</li>
+<li>extend testcase for chunked encoding to validate
+handling of footers</li>
+<li>more testing for SSL support</li>
+<li>MHD basic and digest authentication</li>
+</ul><h1>
+<a name="functions-not-covered-by-make-check" class="anchor" href="#functions-not-covered-by-make-check"><span class="octicon octicon-link"></span></a>Functions not covered by "make check":</h1>
+
+<ul>
+<li>mhd_panic_std (daemon.c); special case (abort)</li>
+<li>parse_options (daemon.c)</li>
+<li>MHD_set_panic_func (daemon.c)</li>
+<li>MHD_get_version (daemon.c)</li>
+</ul><h1>
+<a name="missing-documentation" class="anchor" href="#missing-documentation"><span class="octicon octicon-link"></span></a>Missing documentation:</h1>
+
+<ul>
+<li>manual:
+
+<ul>
+<li>document configuration options</li>
+<li>document details on porting MHD (plibc, z/OS)</li>
+</ul>
+</li>
+</ul>
+        </section>
+
+        <footer>
+          Libmicrohttpd is maintained by <a href="https://github.com/Distrotech">Distrotech</a><br>
+          This page was generated by <a href="http://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="http://twitter.com/jasonlong">Jason Long</a>.
+        </footer>
+
+        
+      </div>
+    </div>
+  </body>
+</html>
